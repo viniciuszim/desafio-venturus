@@ -3,43 +3,88 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
-  HttpCode,
 } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TodosService } from './todos.service';
-import { TodoRO } from './_dtos/todo.ro';
 import { TodoDTO } from './_dtos/todo.dto';
 
+const swaggerEntity = 'Todo';
+const swaggerEntityNotFound = 'Record not found';
+
+@ApiResponse({ status: 403, description: 'Forbidden.' })
+@ApiTags('todos')
 @Controller('todos')
 export class TodosController {
   constructor(private readonly service: TodosService) {}
 
   @Get()
-  async index(): Promise<TodoRO[]> {
+  @ApiOperation({ summary: `Find all ${swaggerEntity}` })
+  @ApiResponse({
+    status: 200,
+    description: 'List of records found',
+  })
+  async index(): Promise<TodoDTO[]> {
     return this.service.findAll();
   }
 
   @Post()
-  async create(@Body() body: TodoDTO): Promise<TodoRO> {
+  @ApiOperation({ summary: `Create ${swaggerEntity}` })
+  @ApiResponse({
+    status: 201,
+    description: 'The record saved',
+    type: TodoDTO,
+  })
+  async create(@Body() body: TodoDTO): Promise<TodoDTO> {
     return this.service.create(body);
   }
 
   @Get('/:id')
-  async show(@Param('id') id: number): Promise<TodoRO> {
+  @ApiOperation({ summary: `Find one ${swaggerEntity}` })
+  @ApiResponse({
+    status: 200,
+    description: 'The record found',
+    type: TodoDTO,
+  })
+  @ApiResponse({
+    status: 404,
+    description: `${swaggerEntityNotFound}`,
+  })
+  async show(@Param('id') id: number): Promise<TodoDTO> {
     return this.service.findById(id);
   }
 
   @Patch('/:id')
+  @ApiOperation({ summary: `Update ${swaggerEntity}` })
+  @ApiResponse({
+    status: 200,
+    description: 'The record updated',
+    type: TodoDTO,
+  })
+  @ApiResponse({
+    status: 404,
+    description: `${swaggerEntityNotFound}`,
+  })
   async update(
     @Param('id') id: number,
     @Body() body: TodoDTO,
-  ): Promise<TodoRO> {
+  ): Promise<TodoDTO> {
     return this.service.update(id, body);
   }
 
   @Delete('/:id')
+  @ApiOperation({ summary: `Delete ${swaggerEntity}` })
+  @ApiResponse({
+    status: 204,
+    description: 'Successful delete',
+  })
+  @ApiResponse({
+    status: 404,
+    description: `${swaggerEntityNotFound}`,
+  })
   @HttpCode(204)
   async delete(@Param('id') id: number): Promise<void> {
     return this.service.delete(id);

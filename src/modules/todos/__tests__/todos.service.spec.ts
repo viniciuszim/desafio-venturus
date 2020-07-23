@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { TodosService } from '../todos.service';
-import { Todo } from '../todo.entity';
+import { Todo } from '../../../entities/todo.entity';
 
 const mockRepository = (): object => ({
   find: jest.fn(),

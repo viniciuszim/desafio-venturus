@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { TodosService } from './todos.service';
-import { TodoDTO } from './_dtos/todo.dto';
+import { TodoDTO } from '../../dtos/todo.dto';
 
 const swaggerEntity = 'Todo';
 const swaggerEntityNotFound = 'Record not found';

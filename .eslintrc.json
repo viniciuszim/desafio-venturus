@@ -32,12 +32,6 @@
       "error",
       "always"
     ],
-    "object-property-newline": [
-      "error",
-      {
-        "allowAllPropertiesOnSameLine": false
-      }
-    ],
     "func-names": [
       "error",
       "always"

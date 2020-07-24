@@ -9,8 +9,8 @@ import {
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { TodoDTO } from 'dtos/todo.dto';
 import { TodosService } from './todos.service';
-import { TodoDTO } from '../../dtos/todo.dto';
 
 const swaggerEntity = 'Todo';
 const swaggerEntityNotFound = 'Record not found';

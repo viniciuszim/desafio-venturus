@@ -1,15 +1,36 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
     "declaration": true,
-    "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
-  }
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "target": "es2017",
+    "typeRoots": ["node_modules/@types"]
+  },
+  "paths": {
+    "src/*": ["src/*"],
+    "decorators/*": ["./src/decorators/*"],
+    "domain-entities/*": ["./src/domain-entities/*"],
+    "dtos/*": ["./src/dtos/*"],
+    "entities/*": ["./src/entities/*"],
+    "enums/*": ["./src/enums/*"],
+    "exceptions/*": ["./src/exceptions/*"],
+    "helpers/*": ["./src/helpers/*"],
+    "modules/**/*": ["./src/modules/**/*"],
+    "modules/auth/*": ["./src/modules/auth/*"],
+    "scripts/*": ["./src/scripts/*"],
+    "shared/*": ["./src/shared/*"]
+  },
+  "exclude": ["dist", "node_modules"]
 }

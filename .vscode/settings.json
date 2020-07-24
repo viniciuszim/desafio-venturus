@@ -1,0 +1,13 @@
+{
+    "files.exclude": {
+      "**/.git": true,
+      "**/.DS_Store": true,
+      "**/node_modules": true,
+      ".bin": true,
+      ".install": true
+    },
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2,
+    "prettier.configPath": "prettier.config.js"
+  }
+  

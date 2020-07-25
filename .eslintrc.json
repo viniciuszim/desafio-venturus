@@ -27,6 +27,7 @@
   ],
   "rules": {
     "@typescript-eslint/ban-types": "off",
+    "camelcase": "off",
     "no-underscore-dangle": "off",
     "object-shorthand": [
       "error",

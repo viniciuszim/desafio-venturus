@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 
 import { LibDTO } from 'dtos/lib.dto';
 import { Lib } from 'entities/lib.entity';
+import { GithubService } from 'services/github.service';
 
 @Injectable()
 export class LibrariesService {
@@ -11,6 +12,12 @@ export class LibrariesService {
     @InjectRepository(Lib)
     private readonly libRepository: Repository<Lib>,
   ) {}
+
+  public async findByRepository(repository: string): Promise<Lib> {
+    const githubService = new GithubService();
+    const lib = await githubService.findByRepository(repository);
+    return await this.create(lib);
+  }
 
   public async findAll(): Promise<Lib[]> {
     return await this.libRepository.find();

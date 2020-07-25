@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LibDTO } from 'dtos/lib.dto';
@@ -20,6 +21,13 @@ const swaggerEntityNotFound = 'Record not found';
 @Controller('libraries')
 export class LibrariesController {
   constructor(private readonly service: LibrariesService) {}
+
+  @Get('/search')
+  async searchRepository(
+    @Query('repository') repository: string,
+  ): Promise<LibDTO> {
+    return this.service.findByRepository(repository);
+  }
 
   @Get()
   @ApiOperation({ summary: `Find all ${swaggerEntity}` })

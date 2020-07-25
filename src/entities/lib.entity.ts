@@ -5,15 +5,28 @@ export class Lib {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    nullable: false,
+  })
   name: string;
 
-  @Column()
+  @Column({
+    nullable: false,
+  })
+  description: string;
+
+  @Column({
+    nullable: true,
+  })
   issues: number;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   avgAge: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+  })
   stdAge: string;
 }

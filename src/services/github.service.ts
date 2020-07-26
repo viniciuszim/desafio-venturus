@@ -1,5 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
+import { create, all } from 'mathjs';
 
 import {
   DateAndTime,
@@ -57,6 +58,9 @@ export class GithubService {
       const avgAge = this.calculateAvgAge(now, lib.issues);
       lib.avgAge = avgAge;
 
+      const stdAge = this.calculateStdAge(now, lib.issues);
+      lib.stdAge = stdAge;
+
       return plainToClass(LibDTO, lib);
     } catch (error) {
       throw new NotFoundException(`Github repo '${repository}' was not found`);
@@ -112,5 +116,20 @@ export class GithubService {
     });
 
     return parseInt(`${daysOpened / issues.length}`, 10);
+  }
+
+  private calculateStdAge(now: DateAndTime, issues: Array<any>): number {
+    const dayArray = [];
+
+    issues.forEach(element => {
+      const createdAt = getZuluDateAndTime(element.createdAt);
+      const days = daysBetweenDates(createdAt.dateTime, now.dateTime);
+      dayArray.push(days);
+    });
+
+    const config = {};
+    const math = create(all, config);
+
+    return parseInt(`${math.std(dayArray)}`, 10);
   }
 }

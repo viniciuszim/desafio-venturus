@@ -36,6 +36,7 @@
     "compression": "^1.7.4",
     "dotenv": "^8.2.0",
     "helmet": "^3.23.3",
+    "mathjs": "^7.1.0",
     "pg": "^8.3.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

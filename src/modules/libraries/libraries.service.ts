@@ -51,4 +51,15 @@ export class LibrariesService {
 
     await this.libRepository.delete(id);
   }
+
+  public async deleteAll(): Promise<void> {
+    const libs = await this.findAll();
+    if (libs) {
+      libs.map(async lib => {
+        await this.libRepository.delete(lib.id);
+      });
+    } else {
+      throw new NotFoundException(`No lib found to delete`);
+    }
+  }
 }

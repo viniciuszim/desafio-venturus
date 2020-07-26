@@ -1,4 +1,10 @@
 import { NotFoundException } from '@nestjs/common';
+
+import {
+  DateAndTime,
+  daysBetweenDates,
+  getZuluDateAndTime,
+} from 'helpers/dates';
 import { Lib } from 'entities/lib.entity';
 import githubApi from './external.api';
 
@@ -21,19 +27,33 @@ export class GithubService {
     }
   }
 
-  public async findEvents(eventsUrl: string, lib: Lib): Promise<Lib> {
+  private async findEvents(eventsUrl: string, lib: Lib): Promise<Lib> {
     try {
       const { data } = await githubApi.get(eventsUrl);
 
-      console.log(data.length);
+      const now = getZuluDateAndTime(new Date());
+
+      const avgAge = this.calculateAvgAge(now, data);
 
       return {
         ...lib,
-        avgAge: '1d',
-        stdAge: '2d',
+        avgAge,
+        stdAge: 0,
       } as Lib;
     } catch (error) {
       throw new NotFoundException(`Event '${eventsUrl}' was not found`);
     }
+  }
+
+  private calculateAvgAge(now: DateAndTime, data: Array<any>): number {
+    let daysOpened = 0;
+
+    data.forEach(element => {
+      const createdAt = getZuluDateAndTime(element.created_at);
+      const days = daysBetweenDates(createdAt.dateTime, now.dateTime);
+      daysOpened += days;
+    });
+
+    return daysOpened / data.length;
   }
 }

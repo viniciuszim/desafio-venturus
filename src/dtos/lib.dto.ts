@@ -21,12 +21,12 @@ export class LibDTO {
   readonly issues: number;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  readonly avgAge: string;
+  readonly avgAge: number;
 
   @ApiProperty()
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  readonly stdAge: string;
+  readonly stdAge: number;
 }

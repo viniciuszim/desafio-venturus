@@ -16,7 +16,12 @@ export class LibrariesService {
   public async findByRepository(repository: string): Promise<Lib> {
     const githubService = new GithubService();
     const lib = await githubService.findByRepository(repository);
-    return await this.create(lib);
+
+    const exist = await this.findByName(lib.name);
+    if (!exist) {
+      return await this.create(lib);
+    }
+    return await this.update(exist.id, lib);
   }
 
   public async findAll(): Promise<Lib[]> {
@@ -29,6 +34,20 @@ export class LibrariesService {
       throw new NotFoundException(`Lib '${id}' was not found`);
     }
     return lib;
+  }
+
+  private async findByName(name: string): Promise<Lib | null> {
+    try {
+      return await this.libRepository
+        .createQueryBuilder('lib')
+        .select('lib')
+        .where('lib.name = :name', {
+          name,
+        })
+        .getOne();
+    } catch (error) {
+      return null;
+    }
   }
 
   public async create(lib: LibDTO): Promise<Lib> {

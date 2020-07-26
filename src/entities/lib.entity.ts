@@ -15,18 +15,18 @@ export class Lib {
   })
   description: string;
 
-  @Column({
+  @Column('integer', {
     nullable: true,
   })
   issues: number;
 
-  @Column({
+  @Column('double precision', {
     nullable: true,
   })
-  avgAge: string;
+  avgAge: number;
 
-  @Column({
+  @Column('double precision', {
     nullable: true,
   })
-  stdAge: string;
+  stdAge: number;
 }

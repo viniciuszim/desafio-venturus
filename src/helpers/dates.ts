@@ -16,18 +16,18 @@ const getOffset = (date?: Date): number => {
 };
 
 export function getZuluDateAndTime(dt?: Date | string): DateAndTime {
-  let zuluDate: Date = new Date();
+  let dateAux: Date = new Date();
 
   if (dt) {
     if (typeof dt === 'string') {
-      zuluDate = new Date(dt);
+      dateAux = new Date(dt);
     } else {
-      zuluDate = dt as Date;
+      dateAux = dt as Date;
     }
   }
 
-  const offset = getOffset(zuluDate);
-  const dateTimeTz = new Date(zuluDate.getTime() - offset);
+  const offset = getOffset(dateAux);
+  const dateTimeTz = new Date(dateAux.getTime() - offset);
   const dateTimeISOArr = dateTimeTz.toISOString().split('T');
   const [datePart, timePart] = dateTimeISOArr;
   const date = datePart;

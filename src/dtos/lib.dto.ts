@@ -1,32 +1,101 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsString, Length } from 'class-validator';
+import { Exclude, Expose } from 'class-transformer';
+import {
+  IsDateString,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
+import { IssueDTO } from './issue.dto';
 
+@Exclude()
 export class LibDTO {
   @ApiProperty()
-  readonly id: number;
+  @Expose()
+  @IsNumber()
+  id: number;
 
   @ApiProperty()
+  @Expose()
   @IsString()
   @Length(0, 100)
-  readonly name: string;
+  name: string;
 
   @ApiProperty()
+  @Expose()
+  @IsString()
+  @Length(0, 100)
+  fullName: string;
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  @Length(0, 150)
+  url: string;
+
+  @ApiProperty()
+  @Expose()
   @IsString()
   @Length(0, 255)
-  readonly description: string;
+  description: string;
 
   @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  readonly issues: number;
+  @Expose()
+  @IsString()
+  @Length(0, 150)
+  issuesUrl: string;
 
   @ApiProperty()
-  @IsNumber()
-  @IsOptional()
-  readonly avgAge: number;
+  @Expose()
+  @IsString()
+  @Length(0, 150)
+  labelsUrl: string;
 
   @ApiProperty()
+  @Expose()
+  @IsString()
+  @Length(0, 150)
+  contributorsUrl: string;
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  stargazersCount: number;
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  forksCount: number;
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  openIssues: number;
+
+  @ApiProperty()
+  @Expose()
+  @IsDateString()
+  createdAt: Date;
+
+  @ApiProperty()
+  @Expose()
+  @IsDateString()
+  updatedAt: Date;
+
+  @ApiProperty()
+  @Expose()
+  issues: IssueDTO[];
+
+  @ApiProperty()
+  @Expose()
   @IsNumber()
   @IsOptional()
-  readonly stdAge: number;
+  avgAge: number;
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  @IsOptional()
+  stdAge: number;
 }

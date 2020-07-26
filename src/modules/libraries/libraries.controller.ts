@@ -80,12 +80,6 @@ export class LibrariesController {
     return this.service.update(id, body);
   }
 
-  @Delete('/destroy-all')
-  @HttpCode(204)
-  async deleteAll(): Promise<void> {
-    return this.service.deleteAll();
-  }
-
   @Delete('/:id')
   @ApiOperation({ summary: `Delete ${swaggerEntity}` })
   @ApiResponse({

@@ -1,59 +1,116 @@
 import { NotFoundException } from '@nestjs/common';
+import { plainToClass } from 'class-transformer';
 
 import {
   DateAndTime,
   daysBetweenDates,
   getZuluDateAndTime,
 } from 'helpers/dates';
-import { Lib } from 'entities/lib.entity';
+import { LibDTO } from 'dtos/lib.dto';
+import { IssueDTO } from 'dtos/issue.dto';
 import githubApi from './external.api';
 
 export class GithubService {
-  public async findByRepository(repository: string): Promise<Lib> {
+  public async findByRepository(repository: string): Promise<LibDTO> {
     try {
-      const { data } = await githubApi.get(`/repos/${repository}`);
+      const { data } = await githubApi.get(`/repos/${repository}`, {
+        headers: {
+          Authorization: 'token cb5d6647847be48d4f59b14953bc97ca1b039c43',
+        },
+      });
 
-      const { full_name, description, open_issues, events_url } = data;
-
-      const lib = {
-        name: full_name,
+      const {
+        id,
+        name,
+        full_name,
+        url,
         description,
-        issues: open_issues,
-      } as Lib;
+        stargazers_count,
+        forks_count,
+        open_issues,
+        created_at,
+        updated_at,
+      } = data;
 
-      return await this.findEvents(events_url, lib);
-    } catch (error) {
-      throw new NotFoundException(`Repository '${repository}' was not found`);
-    }
-  }
+      const lib = plainToClass(LibDTO, {
+        id,
+        name,
+        fullName: full_name,
+        url,
+        description,
+        issuesUrl: `${url}/issues`,
+        labelsUrl: `${url}/labels`,
+        contributorsUrl: `${url}/contributors`,
+        stargazersCount: stargazers_count,
+        forksCount: forks_count,
+        openIssues: open_issues,
+        createdAt: created_at,
+        updatedAt: updated_at,
+        avgAge: 0,
+        stdAge: 0,
+      });
 
-  private async findEvents(eventsUrl: string, lib: Lib): Promise<Lib> {
-    try {
-      const { data } = await githubApi.get(eventsUrl);
+      lib.issues = await this.findIssues(lib);
 
       const now = getZuluDateAndTime(new Date());
 
-      const avgAge = this.calculateAvgAge(now, data);
+      const avgAge = this.calculateAvgAge(now, lib.issues);
+      lib.avgAge = avgAge;
 
-      return {
-        ...lib,
-        avgAge,
-        stdAge: 0,
-      } as Lib;
+      return plainToClass(LibDTO, lib);
     } catch (error) {
-      throw new NotFoundException(`Event '${eventsUrl}' was not found`);
+      throw new NotFoundException(`Github repo '${repository}' was not found`);
     }
   }
 
-  private calculateAvgAge(now: DateAndTime, data: Array<any>): number {
+  private async findIssues(lib: LibDTO): Promise<IssueDTO[]> {
+    try {
+      let page = 1;
+      const perPage = 100;
+
+      let githubIssues = [];
+      const issues = [] as IssueDTO[];
+
+      while (page === 1 || (page > 1 && githubIssues.length > 0)) {
+        const { data } = await githubApi.get(
+          `${lib.issuesUrl}?page=${page}&per_page=${perPage}`,
+          {
+            headers: {
+              Authorization: 'token cb5d6647847be48d4f59b14953bc97ca1b039c43',
+            },
+          },
+        );
+
+        githubIssues = data;
+        githubIssues.forEach(issue => {
+          issues.push(
+            plainToClass(IssueDTO, {
+              ...issue,
+              createdAt: issue.created_at,
+              updatedAt: issue.updated_at,
+              lib,
+            }),
+          );
+        });
+
+        page += 1;
+      }
+
+      return issues;
+    } catch (error) {
+      throw new NotFoundException(`Issues '${lib.issuesUrl}' was not found`);
+    }
+  }
+
+  private calculateAvgAge(now: DateAndTime, issues: Array<any>): number {
     let daysOpened = 0;
 
-    data.forEach(element => {
-      const createdAt = getZuluDateAndTime(element.created_at);
+    issues.forEach(element => {
+      const createdAt = getZuluDateAndTime(element.createdAt);
       const days = daysBetweenDates(createdAt.dateTime, now.dateTime);
       daysOpened += days;
     });
 
-    return daysOpened / data.length;
+    return parseInt(`${daysOpened / issues.length}`, 10);
   }
 }

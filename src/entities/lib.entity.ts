@@ -1,8 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ObjectType,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
+import { Issue } from './issue.entity';
 
 @Entity()
 export class Lib {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   id: number;
 
   @Column({
@@ -13,12 +21,57 @@ export class Lib {
   @Column({
     nullable: false,
   })
+  fullName: string;
+
+  @Column({
+    nullable: false,
+  })
+  url: string;
+
+  @Column({
+    nullable: false,
+  })
   description: string;
 
-  @Column('integer', {
-    nullable: true,
+  @Column({
+    nullable: false,
   })
-  issues: number;
+  issuesUrl: string;
+
+  @Column({
+    nullable: false,
+  })
+  labelsUrl: string;
+
+  @Column({
+    nullable: false,
+  })
+  contributorsUrl: string;
+
+  @Column('integer', {
+    nullable: false,
+  })
+  stargazersCount: number;
+
+  @Column('integer', {
+    nullable: false,
+  })
+  forksCount: number;
+
+  @Column('integer', {
+    nullable: false,
+  })
+  openIssues: number;
+
+  @Column({
+    nullable: false,
+  })
+  createdAt: Date;
+
+  @Column({
+    nullable: false,
+  })
+  updatedAt: Date;
 
   @Column('double precision', {
     nullable: true,
@@ -29,4 +82,17 @@ export class Lib {
     nullable: true,
   })
   stdAge: number;
+
+  @OneToMany(
+    (): ObjectType<Issue> => Issue,
+    ({ lib }): Lib => lib,
+    {
+      cascade: true,
+    },
+  )
+  @JoinColumn({
+    name: 'id',
+    referencedColumnName: 'libId',
+  })
+  issues: Issue[];
 }
